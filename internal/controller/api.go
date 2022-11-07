@@ -50,7 +50,7 @@ func (a *App) setV1Routes(router *gin.RouterGroup) {
 	v1 := router.Group("/v1")
 
 	v1.GET("/plug", func(c *gin.Context) {
-		c.JSON(200, "plug")
+		c.JSON(200, "plug f")
 	})
 }
 
