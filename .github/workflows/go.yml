@@ -1,0 +1,43 @@
+name: ci
+
+on:
+  push:
+    branches: [ "main" ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ "main" ]
+    tags:
+      - 'v*'
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Build and push
+        env:
+          bot_token: ${{ secrets.BOT_TOKEN }}
+          fs_conf: ${{ secrets.FIREBASE_FILE }}
+        uses: docker/build-push-action@v2
+        with:
+          context: ./
+          file: ./docker/Dockerfile
+          builder: ${{ steps.buildx.outputs.name }}
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/bpzh-api:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/bpzh-api:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/bpzh-api:buildcache,mode=max
