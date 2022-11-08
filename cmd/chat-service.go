@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bpzh-api/internal/client/vk_api"
 	"bpzh-api/internal/config"
 	"bpzh-api/internal/controller"
 	"bpzh-api/internal/logic"
@@ -23,9 +24,11 @@ func main() {
 	}
 	defer dbConnectionPool.Close()
 
-	repo := db.NewRepo(dbConnectionPool) // model работает с БД и прочими источниками данных
-	lgc := logic.NewLogic(cfg, repo)     // logic знает, что делать с model
-	api := controller.NewApp(cfg, lgc)   // api использует logic для обработки запросов
+	vkApiClient := vk_api.NewClient(&cfg.VkApi)
+
+	repo := db.NewRepo(dbConnectionPool)          // model работает с БД и прочими источниками данных
+	lgc := logic.NewLogic(cfg, repo, vkApiClient) // logic знает, что делать с model
+	api := controller.NewApp(cfg, lgc)            // api использует logic для обработки запросов
 
 	api.StartServe()
 }

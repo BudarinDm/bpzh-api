@@ -49,6 +49,9 @@ type App struct {
 func (a *App) setV1Routes(router *gin.RouterGroup) {
 	v1 := router.Group("/v1")
 
+	v1.POST("/request_code", a.RequestCode)
+	v1.POST("/login", a.CheckCode)
+
 	v1.GET("/plug", func(c *gin.Context) {
 		c.JSON(200, "plug f")
 	})
@@ -111,11 +114,34 @@ func (a *App) StartServe() {
 }
 
 // Error возвращает пользователю ошибку
-func (a *App) Error(c *gin.Context, status, code int, message string) {
+func (a *App) Error(c *gin.Context, status int, message string) {
 	c.JSON(status, ErrorResponse{
 		Status:  status,
-		Code:    code,
 		Message: message,
 	})
+}
 
+type ErrorLimitResponse struct {
+	Status          int    `json:"status"`
+	Message         string `json:"message"`
+	TillNextRequest int64  `json:"till_next_request"`
+}
+
+func (a *App) ErrorLimit(ctx *gin.Context, status int, message string, nextTry int64) {
+	ctx.JSON(status, ErrorLimitResponse{
+		Status:          status,
+		Message:         message,
+		TillNextRequest: nextTry,
+	})
+}
+
+type CheckSessionError struct {
+	Status  int    `json:"status"`
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
+
+type CheckSessionResponse struct {
+	Id   string `json:"id"`
+	VkId int64  `json:"vk_id"`
 }

@@ -6,17 +6,23 @@ import (
 )
 
 type Config struct {
-	App AppConfig
-	DB  DBConfig
+	App   AppConfig
+	DB    DBConfig
+	VkApi VkApiConfig
 }
 
 type AppConfig struct {
-	Port     string
-	LogLevel string
+	Port        string
+	LogLevel    string
+	TokenSecret string
 }
 
 type DBConfig struct {
 	FSConf string
+}
+
+type VkApiConfig struct {
+	BotToken string
 }
 
 func ReadConfig() (*Config, error) {
@@ -36,11 +42,23 @@ func ReadConfig() (*Config, error) {
 		config.App.LogLevel = "debug"
 	}
 
+	config.App.TokenSecret = os.Getenv("TOKEN_SECRET")
+	if config.App.TokenSecret == "" {
+		return nil, errors.New("Not specified TOKEN_SECRET")
+	}
+
 	//db parse
 
 	config.DB.FSConf = os.Getenv("FS_CONF")
 	if config.DB.FSConf == "" {
 		return nil, errors.New("Not specified FS_CONF")
+	}
+
+	//vk api
+
+	config.VkApi.BotToken = os.Getenv("BOT_TOKEN")
+	if config.VkApi.BotToken == "" {
+		return nil, errors.New("Not specified BOT_TOKEN")
 	}
 
 	return &config, err
