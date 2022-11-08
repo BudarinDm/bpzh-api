@@ -10,6 +10,12 @@ import (
 	"time"
 )
 
+func (a *App) SetAuthRoutes(auth *gin.RouterGroup) {
+	auth.POST("/request_code", a.RequestCode)
+	auth.POST("/login", a.CheckCode)
+	auth.GET("/check", a.CheckSession)
+}
+
 func (a *App) RequestCode(ctx *gin.Context) {
 	// Валидация запроса
 	var request model.RequestCode

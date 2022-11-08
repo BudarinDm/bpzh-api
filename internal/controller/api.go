@@ -47,10 +47,10 @@ type App struct {
 }
 
 func (a *App) setV1Routes(router *gin.RouterGroup) {
-	v1 := router.Group("/v1")
+	auth := router.Group("/auth")
+	a.SetAuthRoutes(auth)
 
-	v1.POST("/request_code", a.RequestCode)
-	v1.POST("/login", a.CheckCode)
+	v1 := router.Group("/v1")
 
 	v1.GET("/plug", func(c *gin.Context) {
 		c.JSON(200, "plug f")
