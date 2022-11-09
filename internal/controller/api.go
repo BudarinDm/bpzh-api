@@ -51,10 +51,8 @@ func (a *App) setV1Routes(router *gin.RouterGroup) {
 	a.SetAuthRoutes(auth)
 
 	v1 := router.Group("/v1")
-
-	v1.GET("/plug", func(c *gin.Context) {
-		c.JSON(200, "plug f")
-	})
+	users := v1.Group("/users")
+	a.SetUserRoutes(users)
 }
 
 func NewApp(config *config.Config, logic *logic.Logic) *App {

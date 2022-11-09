@@ -36,7 +36,7 @@ func (l *Logic) CreateToken(ctx context.Context, docId, token, userDocId string,
 }
 
 func (l *Logic) SendCode(code, userId int) error {
-	err := l.vkApiClient.SendCode(code, userId)
+	err := l.vkApiBpzhClient.SendCode(code, userId)
 	if err != nil {
 		return err
 	}

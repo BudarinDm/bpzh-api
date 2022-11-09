@@ -8,15 +8,15 @@ import (
 
 // Logic содержит все для доступа к данным
 type Logic struct {
-	config      *config.Config
-	repo        *db.Repo
-	vkApiClient *vk_api.Client
+	config          *config.Config
+	repo            *db.Repo
+	vkApiBpzhClient *vk_api.Client
 }
 
-func NewLogic(config *config.Config, repo *db.Repo, vkApiClient *vk_api.Client) *Logic {
+func NewLogic(config *config.Config, repo *db.Repo, vkApiBpzhClient *vk_api.Client) *Logic {
 	return &Logic{
-		config:      config,
-		repo:        repo,
-		vkApiClient: vkApiClient,
+		config:          config,
+		repo:            repo,
+		vkApiBpzhClient: vkApiBpzhClient,
 	}
 }

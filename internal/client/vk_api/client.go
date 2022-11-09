@@ -2,9 +2,11 @@ package vk_api
 
 import (
 	"bpzh-api/internal/config"
+	"bpzh-api/internal/model"
 	"fmt"
 	"github.com/SevereCloud/vksdk/v2/api"
 	"github.com/SevereCloud/vksdk/v2/api/params"
+	"strconv"
 )
 
 type Client struct {
@@ -30,6 +32,36 @@ func (c *Client) SendCode(code, userId int) (err error) {
 	fmt.Println(st)
 	if err != nil {
 		return err
+	}
+	return
+}
+
+func (c *Client) GetUsersInChat(chatId int64) (users []model.User, err error) {
+	members, err := c.vk.MessagesGetConversationMembers(api.Params{"peer_id": chatId})
+	if err != nil {
+		return
+	}
+
+	var usersIds string
+	for _, m := range members.Items {
+		if m.MemberID < 0 {
+			continue
+		}
+		usersIds += "," + strconv.Itoa(m.MemberID)
+	}
+	resp, err := c.vk.UsersGet(api.Params{"user_ids": usersIds, "fields": "domain"})
+	if err != nil {
+		return
+	}
+
+	for _, u := range resp {
+		user := model.User{
+			FirstName: u.FirstName,
+			LastName:  u.LastName,
+			VkId:      int64(u.ID),
+			VkDomain:  u.Domain,
+		}
+		users = append(users, user)
 	}
 	return
 }
